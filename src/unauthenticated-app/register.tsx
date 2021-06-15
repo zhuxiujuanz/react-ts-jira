@@ -19,12 +19,17 @@ import { LongButton } from "unauthenticated-app/index";
 // test(a)
 const apiUrl = process.env.REACT_APP_API_URL;
 
-export const RegisterScreen = () => {
+export const RegisterScreen = ({onError}:{onError:(error:Error)=>void}) => {
     const { register, user } = useAuth();
 
     // HTMLFormElement extends Element
     const handleSubmit = (values: { username: string; password: string }) => {
-        register(values);
+        // register(values).catch(onError); //如果不想用try catch风格可以直接在register 后面用catch
+        try{
+            register(values);
+        }catch (e) {
+            onError(e)
+        }
     };
 
     return (

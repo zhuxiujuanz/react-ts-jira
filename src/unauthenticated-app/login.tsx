@@ -19,12 +19,17 @@ import { LongButton } from "unauthenticated-app/index";
 // test(a)
 const apiUrl = process.env.REACT_APP_API_URL;
 
-export const LoginScreen = () => {
+export const LoginScreen = ({onError}:{onError:(error:Error)=>void}) => {
     const { login, user } = useAuth();
 
     // HTMLFormElement extends Element
     const handleSubmit = (values: { username: string; password: string }) => {
-        login(values);
+        // login(values).catch(onError); //如果不想用try catch风格可以直接在login 后面用catch
+        try{
+            login(values);
+        }catch (e) {
+            onError(e)
+        }
     };
 
     return (
