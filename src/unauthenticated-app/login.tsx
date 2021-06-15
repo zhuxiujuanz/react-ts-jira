@@ -2,6 +2,7 @@ import React from "react";
 import { useAuth } from "context/auth-context";
 import { Form, Input } from "antd";
 import { LongButton } from "unauthenticated-app/index";
+import {useAsync} from "../utils/use-async";
 
 // interface Base {
 //   id: number
@@ -21,7 +22,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 export const LoginScreen = ({onError}:{onError:(error:Error)=>void}) => {
     const { login, user } = useAuth();
-
+    const {run, isLoading} = useAsync();
     // HTMLFormElement extends Element
     const handleSubmit = async (values: { username: string; password: string }) => {
         // login(values).catch(onError); //如果不想用try catch风格可以直接在login 后面用catch
@@ -30,7 +31,7 @@ export const LoginScreen = ({onError}:{onError:(error:Error)=>void}) => {
         // try catch的这种方式是不行的，因为login是异步，而try catch 中的catch是同步的，login还没执行完成，几句执行了catch
         // 所以获取不到错误信息， 此时需要在handleSubmit方法加上async
         try{
-            await login(values);
+            run(login(values));
         }catch (e) {
             onError(e)
         }
@@ -51,7 +52,7 @@ export const LoginScreen = ({onError}:{onError:(error:Error)=>void}) => {
                 <Input placeholder={"密码"} type="password" id={"password"} />
             </Form.Item>
             <Form.Item>
-                <LongButton htmlType={"submit"} type={"primary"}>
+                <LongButton loading={isLoading} htmlType={"submit"} type={"primary"}>
                     登录
                 </LongButton>
             </Form.Item>
