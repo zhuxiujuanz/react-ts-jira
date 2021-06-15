@@ -23,8 +23,12 @@ export const RegisterScreen = ({onError}:{onError:(error:Error)=>void}) => {
     const { register, user } = useAuth();
 
     // HTMLFormElement extends Element
-    const handleSubmit = (values: { username: string; password: string }) => {
+    const handleSubmit = ({cpassword, ...values}: { username: string; password: string, cpassword:string }) => {
         // register(values).catch(onError); //如果不想用try catch风格可以直接在register 后面用catch
+        if (cpassword !== values.password) {
+            onError(new Error("请确认两次输入的密码相同"));
+            return;
+        }
         try{
             register(values);
         }catch (e) {
@@ -46,8 +50,14 @@ export const RegisterScreen = ({onError}:{onError:(error:Error)=>void}) => {
             >
                 <Input placeholder={"密码"} type="password" id={"password"} />
             </Form.Item>
+            <Form.Item
+                name={"cpassword"}
+                rules={[{ required: true, message: "请确认密码" }]}
+            >
+                <Input placeholder={"确认密码"} type="password" id={"cpassword"} />
+            </Form.Item>
             <Form.Item>
-                <LongButton htmlType={"submit"} type={"primary"}>
+                <LongButton  htmlType={"submit"} type={"primary"}>
                     注册
                 </LongButton>
             </Form.Item>
