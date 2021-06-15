@@ -31,7 +31,7 @@ export const LoginScreen = ({onError}:{onError:(error:Error)=>void}) => {
         // try catch的这种方式是不行的，因为login是异步，而try catch 中的catch是同步的，login还没执行完成，几句执行了catch
         // 所以获取不到错误信息， 此时需要在handleSubmit方法加上async
         try{
-            run(login(values));
+            await run(login(values));
         }catch (e) {
             onError(e)
         }
