@@ -8,13 +8,23 @@ interface State <D> {
 
 }
 
+
 const defaultInitialState:State<null> = {
     stat: "idle",
     data: null,
     error: null
 }
 
-export const useAsync = <D>(initialState ?:State<D>)=>{
+const defaultConfig = {
+    throwOnError: false,
+};
+
+export const useAsync = <D>(
+    initialState ?:State<D>,
+    initialConfig?: typeof defaultConfig
+)=>{
+    const config = { ...defaultConfig, ...initialConfig };
+
     const [state, setState] = useState<State<D>>({
         ...defaultInitialState,
         ...initialState
@@ -49,8 +59,8 @@ export const useAsync = <D>(initialState ?:State<D>)=>{
             .catch((error) => {
                 // catch会消化异常， 如果不主动抛出，外面是接收不到异常的
                 setError(error);
-                // return error;
-                return Promise.reject(error)
+                if (config.throwOnError) return Promise.reject(error);  // 加这个判断主要是因为 纯异步的时候使用setError ，同步代码不要使用
+                return error
             });
     }
 

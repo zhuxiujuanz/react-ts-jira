@@ -22,7 +22,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 export const LoginScreen = ({onError}:{onError:(error:Error)=>void}) => {
     const { login, user } = useAuth();
-    const {run, isLoading} = useAsync();
+    const { run, isLoading } = useAsync(undefined, { throwOnError: true });
     // HTMLFormElement extends Element
     const handleSubmit = async (values: { username: string; password: string }) => {
         // login(values).catch(onError); //如果不想用try catch风格可以直接在login 后面用catch

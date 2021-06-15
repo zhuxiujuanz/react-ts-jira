@@ -2,6 +2,7 @@ import React from "react";
 import { useAuth } from "context/auth-context";
 import { Form, Input } from "antd";
 import { LongButton } from "unauthenticated-app/index";
+import { useAsync } from "utils/use-async";
 
 // interface Base {
 //   id: number
@@ -21,6 +22,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 export const RegisterScreen = ({onError}:{onError:(error:Error)=>void}) => {
     const { register, user } = useAuth();
+    const { run, isLoading } = useAsync(undefined, { throwOnError: true });
 
     // HTMLFormElement extends Element
     const handleSubmit = async ({cpassword, ...values}: { username: string; password: string, cpassword:string }) => {
@@ -36,7 +38,7 @@ export const RegisterScreen = ({onError}:{onError:(error:Error)=>void}) => {
         // try catch的这种方式是不行的，因为register是异步，而try catch 中的catch是同步的，register还没执行完成，几句执行了catch
         // 所以获取不到错误信息， 此时需要在handleSubmit方法加上async
         try{
-            await register(values);
+            await run(register(values));
         }catch (e) {
             onError(e)
         }
