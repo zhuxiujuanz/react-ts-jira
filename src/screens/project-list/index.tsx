@@ -6,9 +6,8 @@ import { useHttp } from "utils/http";
 import { Typography } from "antd";
 
 import styled from "@emotion/styled";
-import {useAsync} from "../../utils/use-async";
-import ts from "typescript/lib/tsserverlibrary";
-import { Project } from "screens/project-list/list";
+
+import {useProjects} from "../../utils/project";
 
 // 使用 JS 的同学，大部分的错误都是在 runtime(运行时) 的时候发现的
 // 我们希望，在静态代码中，就能找到其中的一些错误 -> 强类型
@@ -22,19 +21,7 @@ export const ProjectListScreen = () => {
     });
     const debouncedParam = useDebounce(param, 200);
     const client = useHttp();
-    const {run, isLoading, error,data:list} = useAsync<Project[]>()
-    useEffect(() => {
-        run(client("projects", { data: cleanObject(debouncedParam) }))
-        // setIsLoading(true);
-        // client("projects", { data: cleanObject(debouncedParam) }).then(setList)
-        //     .catch(error=>{
-        //         setList([]);
-        //         setError(error);
-        //     })
-        //     .finally(()=>setIsLoading(false));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedParam]);
-
+    const {isLoading, error, data:list} = useProjects(debouncedParam)
     useMount(() => {
         client("users").then(setUsers);
     });
