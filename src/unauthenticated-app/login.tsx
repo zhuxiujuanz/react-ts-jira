@@ -23,10 +23,14 @@ export const LoginScreen = ({onError}:{onError:(error:Error)=>void}) => {
     const { login, user } = useAuth();
 
     // HTMLFormElement extends Element
-    const handleSubmit = (values: { username: string; password: string }) => {
+    const handleSubmit = async (values: { username: string; password: string }) => {
         // login(values).catch(onError); //如果不想用try catch风格可以直接在login 后面用catch
+        // 不需要在给handleSubmit方法加上async 这种方式是可以获取到报错信息的，因为login是异步的，所以当login执行完成之后才会执行catch
+
+        // try catch的这种方式是不行的，因为login是异步，而try catch 中的catch是同步的，login还没执行完成，几句执行了catch
+        // 所以获取不到错误信息， 此时需要在handleSubmit方法加上async
         try{
-            login(values);
+            await login(values);
         }catch (e) {
             onError(e)
         }
