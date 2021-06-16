@@ -18,10 +18,9 @@ import {useAsync} from "../utils/use-async";
 // // 鸭子类型(duck typing)：面向接口编程 而不是 面向对象编程
 // const a = {id: 1, name: 'jack'}
 // test(a)
-const apiUrl = process.env.REACT_APP_API_URL;
 
 export const LoginScreen = ({onError}:{onError:(error:Error)=>void}) => {
-    const { login, user } = useAuth();
+    const { login } = useAuth();
     const { run, isLoading } = useAsync(undefined, { throwOnError: true });
     // HTMLFormElement extends Element
     const handleSubmit = async (values: { username: string; password: string }) => {
