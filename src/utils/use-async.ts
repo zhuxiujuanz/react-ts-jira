@@ -1,34 +1,33 @@
-import {useState} from "react";
+import { useState } from "react";
 
-
-interface State <D> {
+interface State<D> {
     error: Error | null;
     data: D | null;
     stat: "idle" | "loading" | "error" | "success";
-
 }
 
-
-const defaultInitialState:State<null> = {
+const defaultInitialState: State<null> = {
     stat: "idle",
     data: null,
-    error: null
-}
+    error: null,
+};
 
 const defaultConfig = {
     throwOnError: false,
 };
 
 export const useAsync = <D>(
-    initialState ?:State<D>,
+    initialState?: State<D>,
     initialConfig?: typeof defaultConfig
-)=>{
+) => {
     const config = { ...defaultConfig, ...initialConfig };
-
     const [state, setState] = useState<State<D>>({
         ...defaultInitialState,
-        ...initialState
+        ...initialState,
     });
+    // useState直接传入函数的含义是：惰性初始化；所以，要用useState保存函数，不能直接传入函数
+    // https://codesandbox.io/s/blissful-water-230u4?file=/src/App.js
+    const [retry, setRetry] = useState(() => () => {});
 
     const setData = (data: D) =>
         setState({
@@ -37,8 +36,7 @@ export const useAsync = <D>(
             error: null,
         });
 
-
-    const setError = (error: Error)=>
+    const setError = (error: Error) =>
         setState({
             error,
             stat: "error",
@@ -46,10 +44,18 @@ export const useAsync = <D>(
         });
 
     // run 用来触发异步请求
-    const run = (promise: Promise<D>)=>{
+    const run = (
+        promise: Promise<D>,
+        runConfig?: { retry: () => Promise<D> }
+    ) => {
         if (!promise || !promise.then) {
             throw new Error("请传入 Promise 类型数据");
         }
+        setRetry(() => () => {
+            if (runConfig?.retry) {
+                run(runConfig?.retry(), runConfig);
+            }
+        });
         setState({ ...state, stat: "loading" });
         return promise
             .then((data) => {
@@ -57,12 +63,12 @@ export const useAsync = <D>(
                 return data;
             })
             .catch((error) => {
-                // catch会消化异常， 如果不主动抛出，外面是接收不到异常的
+                // catch会消化异常，如果不主动抛出，外面是接收不到异常的
                 setError(error);
-                if (config.throwOnError) return Promise.reject(error);  // 加这个判断主要是因为 纯异步的时候使用setError ，同步代码不要使用
-                return error
+                if (config.throwOnError) return Promise.reject(error);
+                return error;
             });
-    }
+    };
 
     return {
         isIdle: state.stat === "idle",
@@ -72,7 +78,8 @@ export const useAsync = <D>(
         run,
         setData,
         setError,
+        // retry 被调用时重新跑一遍run，让state刷新一遍
+        retry,
         ...state,
     };
-
-}
+};
