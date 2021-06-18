@@ -7,8 +7,6 @@ import { useHttp } from "utils/http";
 export const useProjects = (param?: Partial<Project>) => {
     const client = useHttp();
     const { run, ...result } = useAsync<Project[]>();
-    console.log(param);
-    console.log(3333);
     useEffect(() => {
         run(client("projects", { data: cleanObject(param || {}) }));
         // eslint-disable-next-line react-hooks/exhaustive-deps
