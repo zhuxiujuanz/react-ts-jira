@@ -2,7 +2,7 @@ import React, {useMemo,useCallback, useState, memo} from "react";
 import { SearchPanel } from "screens/project-list/search-panel";
 import { List } from "screens/project-list/list";
 import {  useDebounce,useDocumentTitle,  } from "../../utils";
-import { Typography } from "antd";
+import {Button, Typography} from "antd";
 
 import styled from "@emotion/styled";
 
@@ -21,22 +21,23 @@ export const ProjectListScreen = () => {
 
     const [param, setParam] = useProjectsSearchParams();
     const debouncedParam = useDebounce(param, 200);
-    const {isLoading, error, data:list} = useProjects(debouncedParam)
+    const {isLoading, error, data:list, retry} = useProjects(debouncedParam)
     const {data:users} = useUsers()
     useDocumentTitle("项目列表", false);
     console.log(useUrlQueryParam(['name']))
     return (
         <Container>
             <h1>项目列表</h1>
+            {/*<Button onClick={retry}>retry</Button>*/}
             <SearchPanel users={users || []} param={param} setParam={setParam} />
             {error ? (
                 <Typography.Text type={"danger"}>{error.message}</Typography.Text>
             ) : null}
-            <List loading={isLoading} users={users || []} dataSource={list || []} />
+            <List refresh={retry} loading={isLoading} users={users || []} dataSource={list || []} />
         </Container>
     );
 };
-ProjectListScreen.whyDidYouRender = true;
+ProjectListScreen.whyDidYouRender = false;
 
 const Container = styled.div`
   padding: 3.2rem;
