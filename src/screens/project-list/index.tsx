@@ -3,11 +3,11 @@ import { SearchPanel } from "screens/project-list/search-panel";
 import { List } from "screens/project-list/list";
 import { useDebounce, useDocumentTitle } from "../../utils";
 import styled from "@emotion/styled";
-import { Typography } from "antd";
+import {Button, Typography} from "antd";
 import { useProjects } from "utils/project";
 import { useUsers } from "utils/user";
 import { useProjectsSearchParams } from "screens/project-list/util";
-
+import {useUndo} from "utils/use-undo";
 // 基本类型，可以放到依赖里；组件状态，可以放到依赖里；非组件状态的对象，绝不可以放到依赖里
 // https://codesandbox.io/s/keen-wave-tlz9s?file=/src/App.js
 
@@ -21,7 +21,9 @@ export const ProjectListScreen = () => {
         useDebounce(param, 200)
     );
     const { data: users } = useUsers();
-
+    const [
+        { past, present, future },
+        { set, reset, undo, redo, canUndo, canRedo }] = useUndo(0)
     return (
         <Container>
             <h1>项目列表</h1>
@@ -35,11 +37,22 @@ export const ProjectListScreen = () => {
                 users={users || []}
                 dataSource={list || []}
             />
+
+            <p>you clicked {present}</p>
+            <Button key="1" onClick={()=>set(present+1)}>+</Button>
+            <Button key="2" onClick={()=>set(present-1)}>-</Button>
+            <Button key="3" onClick={()=>undo()} disabled={!canUndo}>undo</Button>
+            <Button key="4" onClick={()=>redo()} disabled={!canRedo}>redo</Button>
+            <Button key="5" onClick={()=>reset(0)} disabled={!canRedo}>redo</Button>
+
+
+
+
         </Container>
     );
 };
 
-ProjectListScreen.whyDidYouRender = true;
+ProjectListScreen.whyDidYouRender = false;
 
 const Container = styled.div`
   padding: 3.2rem;
