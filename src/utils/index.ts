@@ -1,4 +1,4 @@
-import { useEffect, useState,useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export const isFalsy = (value: unknown) => (value === 0 ? false : !value);
 
@@ -30,7 +30,6 @@ export const cleanObject = (object: { [key: string]: unknown }) => {
 export const useMount = (callback: () => void) => {
     useEffect(() => {
         callback();
-        // TODO 依赖项里加上callback会造成无限循环，这个和useCallback以及useMemo有关系
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 };
@@ -90,7 +89,6 @@ export const useArray = <T>(initialArray: T[]) => {
     };
 };
 
-
 export const useDocumentTitle = (title: string, keepOnUnmount = true) => {
     const oldTitle = useRef(document.title).current;
     // 页面加载时: 旧title
@@ -109,7 +107,6 @@ export const useDocumentTitle = (title: string, keepOnUnmount = true) => {
         };
     }, [keepOnUnmount, oldTitle]);
 };
-
 
 export const resetRoute = () => (window.location.href = window.location.origin);
 
@@ -132,17 +129,17 @@ export const subset = <
 };
 
 /**
- * 返回组建的挂载状态，如果还没挂载完成或者已经卸载，返回false;反之，返回true
+ * 返回组件的挂载状态，如果还没挂载或者已经卸载，返回false；反之，返回true
  */
-
-export const useMountedRef = () =>{
+export const useMountedRef = () => {
     const mountedRef = useRef(false);
-    useEffect(()=>{
-        mountedRef.current = true;
-        return ()=>{
-            mountedRef.current = false;
-        }
-    })
 
-    return mountedRef
-}
+    useEffect(() => {
+        mountedRef.current = true;
+        return () => {
+            mountedRef.current = false;
+        };
+    });
+
+    return mountedRef;
+};
