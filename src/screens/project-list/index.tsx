@@ -21,9 +21,6 @@ export const ProjectListScreen = () => {
         useDebounce(param, 200)
     );
     const { data: users } = useUsers();
-    const [
-        { past, present, future },
-        { set, reset, undo, redo, canUndo, canRedo }] = useUndo(0)
     return (
         <Container>
             <h1>项目列表</h1>
@@ -38,12 +35,6 @@ export const ProjectListScreen = () => {
                 dataSource={list || []}
             />
 
-            <p>you clicked {present}</p>
-            <Button key="1" onClick={()=>set(present+1)}>+</Button>
-            <Button key="2" onClick={()=>set(present-1)}>-</Button>
-            <Button key="3" onClick={()=>undo()} disabled={!canUndo}>undo</Button>
-            <Button key="4" onClick={()=>redo()} disabled={!canRedo}>redo</Button>
-            <Button key="5" onClick={()=>reset(0)} disabled={!canRedo}>redo</Button>
 
 
 
