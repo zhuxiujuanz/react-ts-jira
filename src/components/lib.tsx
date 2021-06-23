@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { Spin, Typography } from "antd";
+import { Button, Spin, Typography } from "antd";
 import { DevTools } from "jira-dev-tool";
+
 export const Row = styled.div<{
     gap?: number | boolean;
     between?: boolean;
@@ -23,7 +24,6 @@ export const Row = styled.div<{
   }
 `;
 
-
 const FullPage = styled.div`
   height: 100vh;
   display: flex;
@@ -43,3 +43,7 @@ export const FullPageErrorFallback = ({ error }: { error: Error | null }) => (
         <Typography.Text type={"danger"}>{error?.message}</Typography.Text>
     </FullPage>
 );
+
+export const ButtonNoPadding = styled(Button)`
+  padding: 0;
+`;
