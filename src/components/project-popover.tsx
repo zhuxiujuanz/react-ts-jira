@@ -16,6 +16,7 @@ export const ProjectPopover = (props: { projectButton: JSX.Element }) => {
                         <List.Item.Meta title={project.name} />
                     </List.Item>
                 ))}
+
             </List>
             <Divider />
             {props.projectButton}
