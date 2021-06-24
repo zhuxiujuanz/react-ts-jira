@@ -28,6 +28,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { error, isLoading, isIdle, isError, run } = useAsync<User | null>();
     const dispatch: (...args: unknown[]) => Promise<User> = useDispatch();
 
+
+
+
     useMount(() => {
         run(dispatch(bootstrap()));
     });
