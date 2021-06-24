@@ -2,7 +2,8 @@ import React from "react";
 import { useAuth } from "context/auth-context";
 import { Form, Input } from "antd";
 import { LongButton } from "unauthenticated-app/index";
-import {useAsync} from "../utils/use-async";
+import { useAsync } from "utils/use-async";
+import { useDispatch } from "react-redux";
 
 // interface Base {
 //   id: number
@@ -18,21 +19,26 @@ import {useAsync} from "../utils/use-async";
 // // 鸭子类型(duck typing)：面向接口编程 而不是 面向对象编程
 // const a = {id: 1, name: 'jack'}
 // test(a)
+const apiUrl = process.env.REACT_APP_API_URL;
 
-export const LoginScreen = ({onError}:{onError:(error:Error)=>void}) => {
-    const { login } = useAuth();
+export const LoginScreen = ({
+                                onError,
+                            }: {
+    onError: (error: Error) => void;
+}) => {
+    const { login, user } = useAuth();
     const { run, isLoading } = useAsync(undefined, { throwOnError: true });
-    // HTMLFormElement extends Element
-    const handleSubmit = async (values: { username: string; password: string }) => {
-        // login(values).catch(onError); //如果不想用try catch风格可以直接在login 后面用catch
-        // 不需要在给handleSubmit方法加上async 这种方式是可以获取到报错信息的，因为login是异步的，所以当login执行完成之后才会执行catch
+    const dispatch = useDispatch();
 
-        // try catch的这种方式是不行的，因为login是异步，而try catch 中的catch是同步的，login还没执行完成，几句执行了catch
-        // 所以获取不到错误信息， 此时需要在handleSubmit方法加上async
-        try{
+    // HTMLFormElement extends Element
+    const handleSubmit = async (values: {
+        username: string;
+        password: string;
+    }) => {
+        try {
             await run(login(values));
-        }catch (e) {
-            onError(e)
+        } catch (e) {
+            onError(e);
         }
     };
 
