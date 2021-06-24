@@ -48,14 +48,6 @@ export const AuthenticatedApp = () => {
                             path={"/projects"}
                             element={
                                 <ProjectListScreen
-                                    projectButton={
-                                        <ButtonNoPadding
-                                            onClick={() => setProjectModalOpen(true)}
-                                            type={"link"}
-                                        >
-                                            创建项目
-                                        </ButtonNoPadding>
-                                    }
                                 />
                             }
                         />
@@ -67,10 +59,7 @@ export const AuthenticatedApp = () => {
                     </Routes>
                 </Router>
             </Main>
-            <ProjectModal
-                projectModalOpen={projectModalOpen}
-                onClose={() => setProjectModalOpen(false)}
-            />
+            <ProjectModal/>
         </Container>
     );
 };
